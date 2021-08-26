@@ -25,7 +25,7 @@
 <script>
 import EventCard from '@/components/EventCard.vue'
 import EventService from '@/services/EventService.js'
-import { watchEffect } from 'vue'
+import NProgress from 'nprogress'
 
 export default {
   name: 'EventList',
@@ -40,21 +40,38 @@ export default {
     }
   },
 
-  created() {
-    watchEffect(() => {
-      this.events = null
-      EventService.getEvents(2, this.page)
-        .then(response => {
-          this.events = response.data
-          this.totalEvents = response.headers['x-total-count']
+  beforeRouteEnter(to, from, next) {
+    NProgress.start()
+    EventService.getEvents(2, parseInt(to.query.page) || 1)
+      .then(response => {
+        next(comp => {
+          comp.events = response.data
+          comp.totalEvents = response.headers['x-total-count']
         })
-        .catch(error => {
-          console.log(error)
-          this.$router.push({
-            name: 'NetworkError'
-          })
-        })
-    })
+      })
+      .catch(error => {
+        console.log(error)
+        next({ name: 'NetworkError' })
+      })
+      .finally(() => {
+        NProgress.done()
+      })
+  },
+
+  beforeRouteUpdate(to) {
+    NProgress.start()
+    EventService.getEvents(2, parseInt(to.query.page) || 1)
+      .then(response => {
+        this.events = response.data
+        this.totalEvents = response.headers['x-total-count']
+      })
+      .catch(error => {
+        console.log(error)
+        return { name: 'NetworkError' }
+      })
+      .finally(() => {
+        NProgress.done()
+      })
   },
 
   computed: {
