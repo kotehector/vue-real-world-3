@@ -1,9 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import EventList from '../views/EventList.vue'
-import EventLayout from '../views/event/Layout.vue'
-import EventDetails from '../views/event/Details.vue'
-import EventRegister from '../views/event/Register.vue'
-import EventEdit from '../views/event/Edit.vue'
+// import EventList from '../views/EventList.vue'
+const EventList = () =>
+  import(/* webpackChunkName: "event" */ '../views/EventList.vue')
+const EventLayout = () =>
+  import(/* webpackChunkName: "event" */ '../views/event/Layout.vue')
+const EventDetails = () =>
+  import(/* webpackChunkName: "event" */ '../views/event/Details.vue')
+const EventRegister = () =>
+  import(/* webpackChunkName: "event" */ '../views/event/Register.vue')
+const EventEdit = () =>
+  import(/* webpackChunkName: "event" */ '../views/event/Edit.vue')
 import About from '../views/About.vue'
 import NotFound from '../views/NotFound.vue'
 import NetworkError from '../views/NetworkError.vue'
@@ -11,6 +17,7 @@ import NetworkError from '../views/NetworkError.vue'
 import NProgress from 'nprogress'
 import EventService from '@/services/EventService.js'
 import GStore from '@/store'
+import { setTimeout } from 'core-js'
 
 const routes = [
   {
@@ -57,7 +64,8 @@ const routes = [
       {
         path: 'edit',
         name: 'EventEdit',
-        component: EventEdit
+        component: EventEdit,
+        meta: { requireAuth: true }
       }
     ]
   },
@@ -87,11 +95,33 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
 })
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
   NProgress.start()
+
+  const notAuthorized = true
+  if (to.meta.requireAuth && notAuthorized) {
+    GStore.flashMessage = 'Sorry, you are not authorized to view this page'
+
+    setTimeout(() => {
+      GStore.flashMessage = ''
+    }, 3000)
+
+    if (from.href) {
+      return false
+    } else {
+      return { path: '/' }
+    }
+  }
 })
 
 router.afterEach(() => {
