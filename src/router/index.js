@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import EventList from '../views/EventList.vue'
 const EventList = () =>
   import(/* webpackChunkName: "event" */ '../views/EventList.vue')
+const EventCreate = () =>
+  import(/* webpackChunkName: "event" */ '../views/EventCreate.vue')
 const EventLayout = () =>
   import(/* webpackChunkName: "event" */ '../views/event/Layout.vue')
 const EventDetails = () =>
@@ -24,6 +26,12 @@ const routes = [
     path: '/',
     name: 'EventList',
     component: EventList,
+    props: route => ({ page: parseInt(route.query.page) || 1 })
+  },
+  {
+    path: '/create-event',
+    name: 'EventCreate',
+    component: EventCreate,
     props: route => ({ page: parseInt(route.query.page) || 1 })
   },
   {
