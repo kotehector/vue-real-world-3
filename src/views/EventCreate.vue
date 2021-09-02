@@ -75,11 +75,24 @@ export default {
     async onSubmit() {
       const event = {
         ...this.event,
-        id: uuidv4,
+        id: uuidv4(),
         organizer: this.$store.state.user
       }
       console.log('Event:', event)
-      this.$store.dispatch('createEvent', event)
+      this.$store
+        .dispatch('createEvent', event)
+        .then(() => {
+          this.$router.push({
+            name: 'EventDetails',
+            params: { id: event.id }
+          })
+        })
+        .catch(error => {
+          this.$router.push({
+            name: 'ErrorDisplay',
+            params: { error: error }
+          })
+        })
     }
   }
 }

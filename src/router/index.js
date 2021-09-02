@@ -15,6 +15,7 @@ const EventEdit = () =>
 import About from '../views/About.vue'
 import NotFound from '../views/NotFound.vue'
 import NetworkError from '../views/NetworkError.vue'
+import ErrorDisplay from '../views/ErrorDisplay.vue'
 
 import NProgress from 'nprogress'
 // import EventService from '@/services/EventService.js'
@@ -81,6 +82,12 @@ const routes = [
     path: '/about',
     name: 'About',
     component: About
+  },
+  {
+    path: '/error/:error',
+    name: 'ErrorDisplay',
+    props: true,
+    component: ErrorDisplay
   },
   {
     path: '/:catchAll(.*)',

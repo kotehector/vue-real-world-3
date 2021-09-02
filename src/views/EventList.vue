@@ -44,9 +44,14 @@ export default {
     ...mapActions(['fetchEvents'])
   },
 
-  async created() {
-    await this.fetchEvents({
+  created() {
+    this.fetchEvents({
       page: parseInt(this.$route.query.page) || 1
+    }).catch(error => {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error }
+      })
     })
   },
 
