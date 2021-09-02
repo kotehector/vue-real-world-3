@@ -45,7 +45,6 @@
 
 <script>
 import { v4 as uuidv4 } from 'uuid'
-import EventService from '@/services/EventService.js'
 
 export default {
   name: 'EventCreate',
@@ -80,15 +79,7 @@ export default {
         organizer: this.$store.state.user
       }
       console.log('Event:', event)
-      try {
-        let response = await EventService.postEvent(event)
-        if (response) {
-          console.log('response: ', response)
-          this.$stroe.commit('ADD_EVENT', event)
-        }
-      } catch (error) {
-        console.log('onSubmit:::: ', error.response)
-      }
+      this.$store.dispatch('createEvent', event)
     }
   }
 }

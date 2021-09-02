@@ -1,6 +1,6 @@
 <template>
-  <div v-if="GStore.event">
-    <h1>{{ GStore.event.title }}</h1>
+  <div v-if="event">
+    <h1>{{ event.title }}</h1>
     <div id="nav">
       <router-link :to="{ name: 'EventDetails' }">
         Details
@@ -13,7 +13,7 @@
       </router-link>
     </div>
 
-    <router-view :event="GStore.event" />
+    <router-view :event="event" />
   </div>
 </template>
 
@@ -21,7 +21,17 @@
 export default {
   name: 'EventLayout',
 
-  inject: ['GStore']
+  props: ['id'],
+
+  created() {
+    this.$store.dispatch('fetchEvent', this.id)
+  },
+
+  computed: {
+    event() {
+      return this.$store.state.event
+    }
+  }
 }
 </script>
 
